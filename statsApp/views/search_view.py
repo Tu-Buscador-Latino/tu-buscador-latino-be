@@ -1,6 +1,5 @@
-from rest_framework import fields, status, views, generics
+from rest_framework import status, views, generics
 from rest_framework.response import Response
-from django.utils import timezone
 
 from statsApp.models.search import Search
 from statsApp.serializers.search_serializer import SearchSerializer
@@ -28,3 +27,14 @@ class SearchPostView(views.APIView):
         serializer.save()
         return Response({"search": serializer.data}, 
             status=status.HTTP_201_CREATED)
+
+
+class SearchStats(generics.ListAPIView):
+    serializer_class = SearchSerializer
+    
+    def get(self, request, *args, **kwargs):
+        max_results = int(request.query_params['max'])
+        searchs = Search.objects.all().order_by('-count')[:max_results]
+        serializer_tickets = SearchSerializer(searchs, many=True)
+        return Response(serializer_tickets.data, 
+            status=status.HTTP_200_OK)
