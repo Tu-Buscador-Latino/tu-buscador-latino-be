@@ -20,4 +20,5 @@ from statsApp import views
 urlpatterns = [
     # path('admin/', admin.site.urls),
     path('search/post/', views.SearchPostView.as_view()),
+    path('search/stats/', views.SearchStats.as_view()),
 ]
