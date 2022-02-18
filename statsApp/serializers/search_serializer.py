@@ -3,7 +3,8 @@ from statsApp.models.search import Search
 
 
 class SearchSerializer(serializers.ModelSerializer):
-
+    """Serializer for Search model
+    """
     class Meta:
         model = Search
 

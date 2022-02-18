@@ -3,7 +3,8 @@ from django.db import models
 from django.utils import timezone
 
 class Search(models.Model):
-
+    """Represents the data to persist about the searches in the frontend
+    """
     id = models.BigAutoField(primary_key=True)
     word = models.CharField(max_length = 120)
     count = models.IntegerField(default=1)
