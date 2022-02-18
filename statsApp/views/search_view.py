@@ -6,23 +6,29 @@ from statsApp.serializers.search_serializer import SearchSerializer
 
 
 class SearchPostView(views.APIView):
+    """Represents the API to receive the searched words from
+    the frontend 
+    """
     
     def post(self, request, *args, **kwargs):
-        
-        search = Search.objects.filter(word=request.data['word']).first()
+        word = request.data['word'].lower()
+        search = Search.objects.filter(word=word).first()
         
         # Update stats if word exists
         if search:
             search.update_current(request.data['last_results'])
-            serializer = SearchSerializer(search, data=request.data, 
-                                          partial=True)
+            serializer = SearchSerializer(search, data={},partial=True)
             serializer.is_valid(raise_exception=True)
             serializer.save()
             return Response({"search": serializer.data}, 
             status=status.HTTP_200_OK)
 
-        # Add new word to stats    
-        serializer = SearchSerializer(data=request.data)
+        # Add new word to stats
+        data = {
+            "word": word,
+            "last_results": request.data['last_results']
+        }    
+        serializer = SearchSerializer(data=data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response({"search": serializer.data}, 
@@ -30,6 +36,9 @@ class SearchPostView(views.APIView):
 
 
 class SearchStats(generics.ListAPIView):
+    """Represents the API to consult the statistics about the most
+    searched words
+    """
     serializer_class = SearchSerializer
     
     def get(self, request, *args, **kwargs):
